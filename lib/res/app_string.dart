@@ -356,7 +356,7 @@ class AppString {
       "No Addressed because you Already 4 Address Added";
   static const String noAddressAvaiblabe = 'No Address Available';
   static const String paymentCencle = "Payment Cencle";
-
+//s
   static const String cardBaseUrl = 'https://api.stripe.com/v1/payment_intents';
   static const String athorization =
       'Bearer sk_test_51NxWNQAVUbXW3f6RxbSobZOWNsS7ZQvYMmWEGYEayvWWdsNEO8EKh12Ehlnezl6iXr8N7KA6gP2taLHDN2dTwesu002uaYJMYf';
