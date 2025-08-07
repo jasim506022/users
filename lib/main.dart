@@ -11,6 +11,10 @@ import 'my_app.dart';
 import 'res/app_constant.dart';
 import 'res/app_string.dart';
 
+/// Entry point of the application.
+///
+/// Initializes Flutter bindings, Stripe, Firebase,
+/// SharedPreferences, and sets up background message handling.
 Future<void> main() async {
   // Ensure the widgets are bound to the platform and Firebase is initialized.
   WidgetsFlutterBinding.ensureInitialized();
@@ -22,7 +26,7 @@ Future<void> main() async {
   await _initializeFirebase();
 
   // Load shared preferences and onboarding status
-  await _loadSharedPreferences();
+  await _initializePreferences();
 
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
@@ -41,7 +45,7 @@ Future<void> _initializeFirebase() async {
 }
 
 /// Firebase Initialization with error handling
-Future<void> _loadSharedPreferences() async {
+Future<void> _initializePreferences() async {
   try {
     AppConstant.sharedPreferences = await SharedPreferences.getInstance();
     // Check onboarding status
@@ -53,7 +57,10 @@ Future<void> _loadSharedPreferences() async {
   }
 }
 
-/// Handles Firebase background messages
+/// Handles Firebase background messages.
+///
+/// This function is triggered when the app receives
+/// a push notification while in the background.
 @pragma('vm:entry-point')
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   try {
