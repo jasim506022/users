@@ -6,34 +6,35 @@ import 'package:get/get.dart';
 import '../../controller/onboarding_controller.dart';
 
 import '../../data/onboarding_list_data.dart';
-import '../../model/onboard_model.dart';
 import '../../res/app_colors.dart';
 
 import '../../res/app_string.dart';
 import '../../res/apps_text_style.dart';
-import 'widget/onboarding_page_content_widget.dart';
+import 'widget/onboarding_progress_indicator.dart';
 
-
-/// This screen displays the onboarding flow with multiple pages.
-/// Users can swipe through onboarding pages or skip them using the 'Skip' button.
+/// A screen that presents the onboarding flow to new users.
+///
+/// Users can swipe through multiple onboarding pages to learn about
+/// the app’s features or skip the onboarding entirely using the skip button.
 class OnboardingPage extends StatelessWidget {
   const OnboardingPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    // Get the controller that manages onboarding logic and state
+    /// Controller that manages onboarding state and navigation logic.
     final OnboardingController onboardingController =
-    Get.find<OnboardingController>();
-    // List of onboarding data (text, images, etc.)
-    final List<OnboardModel> onboardingList =
-        OnBoardingListData.getOnboardingData;
+        Get.find<OnboardingController>();
 
-    // Set the status bar style for better visibility
-    _configureStatusBar();
+    /// List of onboarding data (models with text, images, etc.).
+    final onboardingList = OnBoardingListData.getOnboardingData;
+
+    // Set the status bar appearance for improved readability.
+    _setStatusBarStyle();
     return Scaffold(
       appBar: AppBar(
         actions: [
-          // Skip Button: Navigates users to the next screen, marking onboarding as completed
+          /// 'Skip' button that allows users to bypass onboarding.
+          /// Calls controller method to mark onboarding as completed and navigate forward.
           TextButton(
             onPressed: onboardingController.skipOnboarding,
             child: Text(
@@ -49,27 +50,24 @@ class OnboardingPage extends StatelessWidget {
           controller: onboardingController.pageController,
           itemCount: onboardingList.length,
           onPageChanged: (index) => onboardingController.currentIndex(index),
-          itemBuilder:
-              (context, index) => OnboardingPageContentWidget(
-            onboardModel: onboardingList[index],
-          ),
+          itemBuilder: (context, index) =>
+              OnboardingPageContentWidget(onboardModel: onboardingList[index]),
         ),
       ),
     );
   }
 
-  /// Configures the status bar to have a light background with dark icons.
-  void _configureStatusBar() {
+  /// Configures the status bar to use a light background with dark icons,
+  /// improving contrast and visibility on the onboarding screens.
+  void _setStatusBarStyle() {
     SystemChrome.setSystemUIOverlayStyle(
-       SystemUiOverlayStyle(
+      SystemUiOverlayStyle(
         statusBarColor: AppColors.white,
         statusBarBrightness: Brightness.dark,
       ),
     );
   }
 }
-
-
 
 /*
 /// This screen displays the onboarding flow with multiple pages.

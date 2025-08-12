@@ -1,17 +1,13 @@
 class RoutesName {
-
   // General Routes
   static const String splashPage = '/';
   static const String mainPage = '/mainPage';
 
   // Authentication Routes
   static const String signInPage = '/signInPage';
-  static const String onboardingPage = '/onboardingPage';  // Fixed typo
-  static const String signupPage = '/signUpPage';  // Standardized casing
+  static const String onboardingPage = '/onboardingPage'; // Fixed typo
+  static const String signupPage = '/signUpPage'; // Standardized casing
   static const String forgetPasswordPage = '/forgetPassword';
-
-
-
 
   // Product and Search Routes
   static const String productListPage = '/products'; // Product Listing

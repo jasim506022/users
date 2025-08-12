@@ -6,8 +6,11 @@ import '../res/app_function.dart';
 import '../res/app_string.dart';
 import '../res/apps_text_style.dart';
 
-/// A reusable widget that displays the application logo and name.
-/// Ensures proper scaling and spacing using `flutter_screenutil`
+/// A widget that displays the application's logo and name.
+///
+/// Consists of:
+/// - The app icon loaded from assets.
+/// - The app name text styled with the logo text style
 class AppLogoWidget extends StatelessWidget {
   const AppLogoWidget({
     super.key,
@@ -18,6 +21,7 @@ class AppLogoWidget extends StatelessWidget {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
+        // App icon image
         Image.asset(
           AppIcons.appIcon,
           height: 80.h,
@@ -25,7 +29,8 @@ class AppLogoWidget extends StatelessWidget {
           fit: BoxFit.fill,
         ),
         AppsFunction.verticalSpacing(10),
-        Text(AppString.appName, style: AppsTextStyle.appsLogoTextStyle),
+        // App name text
+        Text(AppString.appName, style: AppsTextStyle.logoTextStyle),
       ],
     );
   }

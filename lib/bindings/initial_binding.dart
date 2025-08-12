@@ -37,7 +37,7 @@ class InitialBinding extends Bindings {
 
     // 🔹 Splash
     Get.lazyPut(() => SplashRepository());
-    Get.lazyPut(() => SplashController(repository: Get.find()));
+    Get.lazyPut(() => SplashController(splashRepository: Get.find()));
 
     // 🔹 Onboarding
     Get.lazyPut(() => OnboardingController());
@@ -93,8 +93,6 @@ class InitialBinding extends Bindings {
         () => AddressController(Get.find<AddressRepository>()),
         fenix: true);
 
-    // Get.lazyPut<CartProductCountController>(() => CartProductCountController(),
-    //     fenix: true);
 
     Get.lazyPut<CategoryController>(() => CategoryController(), fenix: true);
     Get.lazyPut<CartController>(
@@ -110,3 +108,8 @@ class InitialBinding extends Bindings {
     Get.lazyPut<ProductSearchController>(() => ProductSearchController());
   }
 }
+
+
+
+// Get.lazyPut<CartProductCountController>(() => CartProductCountController(),
+//     fenix: true);

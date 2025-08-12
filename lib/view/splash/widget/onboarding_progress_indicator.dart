@@ -3,8 +3,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
 import '../../../controller/onboarding_controller.dart';
+import '../../../data/onboarding_list_data.dart';
 import '../../../model/onboard_model.dart';
-import '../../../res/app_string.dart';
 import '../../../res/apps_text_style.dart';
 import 'next_action_button.dart';
 import 'onboarding_progress_dots_widget.dart';
@@ -31,7 +31,7 @@ class OnboardingPageContentWidget extends StatelessWidget {
         Image.asset(onboardModel.image, height: 300.h, fit: BoxFit.fill),
 
         // Progress indicator dots for onboarding pages
-        const OnboardingProgressDotsWidget(),
+        const OnboardingProgressIndicator(),
 
         // Title of the current onboarding page
         Text(onboardModel.title, style: AppsTextStyle.largeTitle),
@@ -45,8 +45,8 @@ class OnboardingPageContentWidget extends StatelessWidget {
 
         // Button to proceed to next page or skip onboarding
         NextActionButtonWidget(
-          title: AppString.btnNext,
-          onTap: onboardingController.goToNextPageOrSkip,
+
+          onTap: onboardingController.nextPageOrSkip,
         ),
       ],
     );

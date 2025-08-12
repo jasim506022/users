@@ -20,6 +20,7 @@ class AppString {
   static const String btnFacebook = "Facebook";
   static const String btnGmail = "Gmail";
   static const String btnOkay = "Okay";
+  static const String btnFinish = "Finish";
 
   // 📌 Firebase Collections & Shared Preferences Keys
   static const String collectionUsers = "users";

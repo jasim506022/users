@@ -28,6 +28,7 @@ Future<void> main() async {
   // Load shared preferences and onboarding status
   await _initializePreferences();
 
+  // Set background message handler for Firebase Messaging
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
   runApp(const MyApp());

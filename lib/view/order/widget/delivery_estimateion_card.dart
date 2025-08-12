@@ -31,7 +31,7 @@ class DeliveryEstimationCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(AppString.onTheWayFromDahaka,
-              style: AppsTextStyle.orderDateCard),
+              style: AppsTextStyle.authIntroTitleTextStyle.copyWith(color: AppColors.white)),
           AppsFunction.verticalSpacing(10),
           Text(AppString.estimatedDeliveryDate,
               style: AppsTextStyle.largeText.copyWith(
@@ -40,7 +40,7 @@ class DeliveryEstimationCard extends StatelessWidget {
           AppsFunction.verticalSpacing(20),
           Text(
             AppsFunction.formatDeliveryDate(datetime: orderModel.deliveryDate),
-            style: AppsTextStyle.orderDateCard,
+            style: AppsTextStyle.authIntroTitleTextStyle.copyWith(color: AppColors.white)
           ),
         ],
       ),

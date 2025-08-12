@@ -6,7 +6,10 @@ import '../res/app_constant.dart';
 import '../res/app_string.dart';
 import '../res/routes/routes_name.dart';
 
-
+/// Controller for managing onboarding flow.
+///
+/// Handles page navigation, current page tracking,
+/// and saving the onboarding completion state.
 class OnboardingController extends GetxController {
   /// Controls the onboarding page view
   final PageController pageController = PageController(initialPage: 0);
@@ -14,19 +17,23 @@ class OnboardingController extends GetxController {
   /// Observable to track the current onboarding page index
   var currentIndex = 0.obs;
 
-  /// Marks onboarding as completed and navigates to the SignIn page
+  /// Skips onboarding, saves state to shared preferences,
+  /// and navigates to the Sign In page.
   Future<void> skipOnboarding() async {
-    AppConstant.isOnboardingViewed = true;
     await AppConstant.sharedPreferences!.setBool(
       AppString.onboardingViewedKey,
-      AppConstant.isOnboardingViewed,
+      true,
     );
     Get.offNamed(RoutesName.signInPage);
   }
 
-  /// Moves to next onboarding page or skips if on the last page
-  Future<void> goToNextPageOrSkip() async {
-    if (currentIndex.value == OnBoardingListData.getOnboardingData.length - 1) {
+  /// Goes to the next onboarding page.
+  ///
+  /// If already on the last page, it skips onboarding instead.
+  Future<void> nextPageOrSkip() async {
+    final bool isLastPage =
+        currentIndex.value == OnBoardingListData.getOnboardingData.length - 1;
+    if (isLastPage) {
       await skipOnboarding();
     } else {
       pageController.nextPage(
@@ -38,11 +45,11 @@ class OnboardingController extends GetxController {
 
   @override
   void onClose() {
+    // Dispose the PageController to free resources.
     pageController.dispose();
     super.onClose();
   }
 }
-
 
 /*
 class OnboardingController extends GetxController {

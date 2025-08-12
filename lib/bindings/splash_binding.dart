@@ -10,6 +10,6 @@ class SplashBinding extends Bindings {
     Get.lazyPut<SplashRepository>(() => SplashRepository());
 
     Get.lazyPut<SplashController>(
-        () => SplashController(repository: Get.find<SplashRepository>()));
+        () => SplashController(splashRepository: Get.find<SplashRepository>()));
   }
 }

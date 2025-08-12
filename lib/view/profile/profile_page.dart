@@ -138,7 +138,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ),
           activeColor: AppColors.white,
           onChanged: (bool value) {
-            themeProvider.setDarkTheme(value);    // = value;
+            themeProvider.updateThemeMode(value);    // = value;
           },
           value: themeProvider.isDarkTheme,
         );
