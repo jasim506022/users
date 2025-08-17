@@ -24,57 +24,26 @@ class RichTextWidget extends StatelessWidget {
   final String normalText;
   final String highlightedText;
   final VoidCallback onTap;
+
   @override
   Widget build(BuildContext context) {
     return RichText(
-        text: TextSpan(children: [
-      TextSpan(
-        text: normalText,
-        style: AppsTextStyle.mediumBoldText,
-      ),
-      TextSpan(
-        text: " $highlightedText",
-        style: AppsTextStyle.buttonTextStyle.copyWith(
-            decoration: TextDecoration.underline, color: AppColors.accentGreen),
-        recognizer: TapGestureRecognizer()
-          ..onTap = () async =>
-              await NetworkUtils.executeWithInternetCheck(action: onTap),
-      ),
-    ]));
-  }
-}
-
-/*
-class RichTextWidget extends StatelessWidget {
-  const RichTextWidget({
-    super.key,
-    required this.simpleText,
-    required this.colorText,
-    required this.function,
-  });
-
-  final String simpleText;
-  final String colorText;
-  final Function function;
-  @override
-  Widget build(BuildContext context) {
-    return RichText(
-        text: TextSpan(children: [
-      TextSpan(
-        text: simpleText,
-        style: AppsTextStyle.mediumBoldText,
-      ),
-      TextSpan(
-          recognizer: TapGestureRecognizer()
-            ..onTap = () async {
-              await NetworkUtili.executeWithInternetCheck(
-                  function: () => function());
-            },
-          text: colorText,
-          style: AppsTextStyle.buttonTextStyle.copyWith(
+      text: TextSpan(
+        children: [
+          TextSpan(text: normalText, style: AppsTextStyle.mediumBoldText),
+          TextSpan(
+            text: " $highlightedText",
+            style: AppsTextStyle.buttonTextStyle.copyWith(
               decoration: TextDecoration.underline,
-              color: AppColors.accentGreen))
-    ]));
+              color: AppColors.accentGreen,
+            ),
+            recognizer: TapGestureRecognizer()
+              ..onTap = () =>
+                  NetworkUtils.executeWithInternetCheck(action: onTap),
+          ),
+        ],
+      ),
+    );
   }
 }
-*/
+

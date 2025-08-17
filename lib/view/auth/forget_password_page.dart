@@ -75,7 +75,7 @@ class _ForgetPasswordPageState extends State<ForgetPasswordPage> {
                   onTap: () async {
                     if (!authController.loadingController.loading.value) {
                       Get.back();
-                      authController.resetFields();
+                      authController.clearInputFields();
                     }
                   },
                   normalText: AppString.youdontWantToReset,

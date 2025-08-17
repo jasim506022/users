@@ -9,7 +9,6 @@ import '../../../res/apps_text_style.dart';
 import 'next_action_button.dart';
 import 'onboarding_progress_dots_widget.dart';
 
-
 /// Displays the content for each onboarding page, including the image, title,
 /// description, progress dots, and the 'Next' button.
 class OnboardingPageContentWidget extends StatelessWidget {
@@ -22,7 +21,7 @@ class OnboardingPageContentWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     // Get the controller that manages onboarding logic and state
     final OnboardingController onboardingController =
-    Get.find<OnboardingController>();
+        Get.find<OnboardingController>();
     return Column(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -35,8 +34,8 @@ class OnboardingPageContentWidget extends StatelessWidget {
 
         // Title of the current onboarding page
         Text(onboardModel.title, style: AppsTextStyle.largeTitle),
-        // Description text with centered alignment and extra line height for readability
 
+        // Description text with centered alignment and extra line height for readability
         Text(
           onboardModel.description,
           textAlign: TextAlign.center,
@@ -44,16 +43,11 @@ class OnboardingPageContentWidget extends StatelessWidget {
         ),
 
         // Button to proceed to next page or skip onboarding
-        NextActionButtonWidget(
-
-          onTap: onboardingController.nextPageOrSkip,
-        ),
+        NextActionButtonWidget(onTap: onboardingController.nextPageOrSkip),
       ],
     );
   }
 }
-
-
 
 /*
 /// Displays the content for each onboarding page, including the image, title,

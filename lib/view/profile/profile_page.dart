@@ -9,7 +9,7 @@ import '../../res/app_colors.dart';
 import '../../res/apps_text_style.dart';
 import '../../res/routes/routes_name.dart';
 import '../../service/provider/theme_provider.dart';
-import '../../widget/show_alert_dialog_widget.dart';
+import '../../widget/custom_alert_dialog.dart';
 import '../../res/network_utils.dart';
 import 'widget/custom_list_tile.dart';
 import 'widget/profile_header_widget.dart';
@@ -153,7 +153,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       iconColor: AppColors.red,
       onTap: () async {
         NetworkUtils.executeWithInternetCheck(action: () {
-          Get.dialog(ShowAlertDialogWidget(
+          Get.dialog(CustomAlertDialog(
             icon: Icons.delete,
             title: AppString.signOut,
             content: AppString.doYouWantSignount,

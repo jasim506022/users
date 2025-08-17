@@ -11,7 +11,7 @@ import '../repository/auth_reposity.dart';
 import '../res/app_function.dart';
 import '../res/app_string.dart';
 import '../widget/error_dialog_widget.dart';
-import '../widget/show_alert_dialog_widget.dart';
+import '../widget/custom_alert_dialog.dart';
 import 'loading_controller.dart';
 import 'select_image_controller.dart';
 
@@ -29,7 +29,7 @@ import 'select_image_controller.dart';
 /// - `LoadingController` for loading state management.
 /// - `SelectImageController` for profile image handling.
 class AuthController extends GetxController {
-  final AuthReposity repository;
+  final AuthRepository repository;
   final LoadingController loadingController = Get.find();
   final SelectImageController selectImageController = Get.find();
 
@@ -57,7 +57,7 @@ class AuthController extends GetxController {
   }
 
   /// Resets all input fields to initial state.
-  void resetFields() {
+  void clearInputFields() {
     for (final controller in [
       emailController,
       passwordController,
@@ -73,21 +73,22 @@ class AuthController extends GetxController {
     selectImageController.selectPhoto.value = null;
   }
 
-  /// Displays a confirmation dialog before exiting the app.
+  /// Handles app exit requests by showing a confirmation dialog.
   ///
-  /// If a process (such as login) is ongoing, the user is notified via a toast message
-  /// instead of showing the dialog. Otherwise, it presents an alert dialog asking
-  /// the user to confirm exiting the app.
-  Future<void> confirmExitApp(bool didPop) async {
+  /// Behavior:
+  /// - If a process (e.g., login) is ongoing, a toast is shown instead of exiting.
+  /// - Otherwise, the user is asked to confirm before closing the app.
+  Future<void> handleExitRequest() async {
+    // Prevent exit during an ongoing process
     if (loadingController.loading.value) {
       AppsFunction.flutterToast(msg: AppString.loginProcessOngoingToast);
       return;
     }
 
-    // Show a confirmation dialog and wait for the user's response.
-    final bool shouldPop =
+    // Ask the user to confirm exit
+    final bool confirmedExit =
         await Get.dialog<bool>(
-          ShowAlertDialogWidget(
+          CustomAlertDialog(
             icon: Icons.question_mark_rounded,
             title: AppString.exitDialogTitle,
             content: AppString.confirmExitMessage,
@@ -95,28 +96,35 @@ class AuthController extends GetxController {
             onCancelPressed: () => Get.back(result: false),
           ),
         ) ??
-        false; // Default to `false` if the dialog is dismissed.
+        // Default to `false` if the dialog is dismissed.
+        false;
     // Close the app if the user confirms.
-    if (shouldPop) SystemNavigator.pop();
+    if (confirmedExit) SystemNavigator.pop();
   }
 
   /// Handles user sign-in using email and password.
+  ///
+  /// - Shows loading indicator during login process
+  /// - Validates user profile existence
+  /// - Navigates to main page on success
+  /// - Shows error dialog on failure
+  /// - Clears input fields and selected image after login
   Future<void> signIn() async {
     try {
       // Show loading indicator
       loadingController.setLoading(true);
       // Retrieve and clean up user input
-      final String email = emailController.text.trim();
-      final String password = passwordController.text.trim();
+      final email = _getInput(emailController);
+      final password = _getInput(passwordController);
       // Attempt login using repository
-      await repository.loginWithEmailAndPassword(
+      await repository.signInWithEmail(
         email: email,
         password: password,
       );
       // Check if the user's profile exists
-      if (await repository.isUserProfileExists()) {
-        _navigateToMainPage(AppString.successSignInMessage);
-        resetFields(); // Clear input fields after successful login
+      if (await repository.doesUserProfileExist()) {
+        _goToMainPage(AppString.successSignInMessage);
+        clearInputFields(); // Clear input fields after successful login
       } else {
         // Show error toast if user profile does not exist
         AppsFunction.flutterToast(msg: AppString.errorUserNotFoundToast);
@@ -140,8 +148,8 @@ class AuthController extends GetxController {
       Get.back();
 
       if (userCredentialGmail != null) {
-        if (await repository.isUserProfileExists()) {
-          _navigateToMainPage(AppString.successSignInMessage);
+        if (await repository.doesUserProfileExist()) {
+          _goToMainPage(AppString.successSignInMessage);
         } else {
           var user = userCredentialGmail.user!;
           ProfileModel profileModel = createUserProfile(user: user);
@@ -151,7 +159,7 @@ class AuthController extends GetxController {
             profileModel: profileModel,
           );
 
-          _navigateToMainPage(AppString.successSignInMessage);
+          _goToMainPage(AppString.successSignInMessage);
         }
       }
     } catch (e) {
@@ -165,7 +173,7 @@ class AuthController extends GetxController {
     if (loadingController.loading.value) {
       AppsFunction.flutterToast(msg: AppString.processOngoingToast);
     } else {
-      resetFields();
+      clearInputFields();
     }
   }
 
@@ -205,9 +213,9 @@ class AuthController extends GetxController {
       );
 
       // Reset the input fields after successful registration
-      resetFields();
+      clearInputFields();
 
-      _navigateToMainPage(AppString.signupSuccessfull);
+      _goToMainPage(AppString.signupSuccessfull);
     } catch (e) {
       // Handle any errors during registration
       _handleError(e);
@@ -272,8 +280,11 @@ class AuthController extends GetxController {
     }
   }
 
-  /// Navigates to the main page with a success message.
-  void _navigateToMainPage(String message) {
+  /// Retrieves trimmed text from a [TextEditingController].
+  String _getInput(TextEditingController controller) => controller.text.trim();
+
+  /// Navigates to the main page with a success toast.
+  void _goToMainPage(String message) {
     AppsFunction.flutterToast(msg: message);
     Get.offNamed(RoutesName.mainPage);
   }
@@ -290,7 +301,8 @@ class AuthController extends GetxController {
     );
   }
 
-  /// Handles exceptions by showing a dialog.
+  /// Handles exceptions by showing an error dialog.
+  /// Shows a generic error for unknown exceptions.
   void _handleError(Object error) {
     if (error is AppException) {
       Get.dialog(
@@ -301,12 +313,15 @@ class AuthController extends GetxController {
           buttonText: AppString.btnOkay,
         ),
       );
+    } else {
+      AppsFunction.flutterToast(msg: "Something went wrong. Please try again.");
+      debugPrint("Unexpected error: $error");
     }
   }
 }
 
 /*
-#: Get.back(result: true)
+
 #: Loading.setLoding(true) : loadingController.setLoading(false);
 #: Gmail After
 #: Boolean methods should start with is or has to make it clear they return a true/false result.

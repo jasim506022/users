@@ -30,7 +30,7 @@ class SignInPage extends StatefulWidget {
 
 class _SignInPageState extends State<SignInPage> {
   /// Controller for handling authentication-related logic
-  late final AuthController authController;
+  late final AuthController _authController;
 
   /// Form key for validation
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
@@ -38,7 +38,7 @@ class _SignInPageState extends State<SignInPage> {
   @override
   void initState() {
     /// Get the `AuthController` instance for managing authentication.
-    authController = Get.find<AuthController>();
+    _authController = Get.find<AuthController>();
     _configureStatusBar();
     super.initState();
   }
@@ -57,9 +57,9 @@ class _SignInPageState extends State<SignInPage> {
   Widget build(BuildContext context) {
     return PopScope(
       canPop: false,
-      // Prevents accidental app exit without confirmation.
-      onPopInvoked: (didPop) async =>
-          await authController.confirmExitApp(didPop),
+      onPopInvokedWithResult:
+          // Prevents accidental app exit without confirmation.
+          (didPop, dynamic) => _authController.handleExitRequest(),
       child: GestureDetector(
         // Dismiss keyboard when tapping outside.
         onTap: () => FocusScope.of(context).unfocus(),
@@ -76,29 +76,29 @@ class _SignInPageState extends State<SignInPage> {
                 ),
 
                 /// Displays the form.
-                _buildForm(),
+                _loginForm(),
                 AppsFunction.verticalSpacing(5),
 
                 /// "Forgot Password" button.
-                _buildForgetPasswordButton(),
+                _forgotPasswordButton(),
                 AppsFunction.verticalSpacing(15),
 
                 /// Login Button  Button.
                 AuthButton(
                   onPressed: () async {
                     if (!_formKey.currentState!.validate()) return;
-                    await authController.signIn();
+                    await _authController.signIn();
                   },
                   label: AppString.signInTitle,
                 ),
                 AppsFunction.verticalSpacing(25),
 
                 /// OR divider section.
-                _buildOrDivider(),
+                orDivider(),
                 AppsFunction.verticalSpacing(20),
 
                 /// Social login buttons (Google & Facebook)
-                _buildSocialLoginOptions(),
+                _socialLoginRow(),
                 AppsFunction.verticalSpacing(25),
 
                 /// Sign-up link with navigation to the registration page.
@@ -116,42 +116,51 @@ class _SignInPageState extends State<SignInPage> {
     );
   }
 
-  /// Builds the login form containing email and password input fields
-  Form _buildForm() {
+  /// A login form with email and password fields, including validation.
+  ///
+  /// - Validates email format
+  /// - Allows password visibility toggle
+  /// - Uses [_formKey] for form validation
+  Form _loginForm() {
     return Form(
       key: _formKey,
       child: Column(
         children: [
-          /// Email input field.
+          /// Email input field
           CustomTextFormField(
             label: AppString.emailLabel,
             hintText: AppString.emailHint,
-            controller: authController.emailController,
+            controller: _authController.emailController,
             validator: Validators.validateEmail,
             textInputType: TextInputType.emailAddress,
+            autofillHints: const [AutofillHints.email],
           ),
 
           /// Password input field
           CustomTextFormField(
             label: AppString.passwordLabel,
+            hintText: AppString.passwordHint,
+            controller: _authController.passwordController,
+            validator: Validators.validatePassword,
             hasPasswordToggle: true,
             obscureText: true,
-            validator: Validators.validatePassword,
-            hintText: AppString.passwordHint,
-            controller: authController.passwordController,
             textInputAction: TextInputAction.done,
+            autofillHints: const [AutofillHints.password],
           ),
         ],
       ),
     );
   }
 
-  /// Builds the "Forgot Password" button.
-  Widget _buildForgetPasswordButton() {
+  /// Returns a "Forgot Password" button aligned to the top-right.
+  ///
+  /// When pressed, checks internet connectivity before navigating
+  /// to the Forget Password page.
+  Widget _forgotPasswordButton() {
     return Align(
       alignment: Alignment.topRight,
       child: TextButton(
-        onPressed: () async => await NetworkUtils.executeWithInternetCheck(
+        onPressed: () => NetworkUtils.executeWithInternetCheck(
           action: () => Get.toNamed(RoutesName.forgetPasswordPage),
         ),
         child: Text(
@@ -165,11 +174,11 @@ class _SignInPageState extends State<SignInPage> {
   }
 
   /// Builds a divider with "OR" text in the center.
-  Row _buildOrDivider() {
+  Row orDivider() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        _buildLine(),
+        _dividerLine(),
         Padding(
           padding: EdgeInsets.symmetric(horizontal: 15.w),
           child: Text(
@@ -179,19 +188,23 @@ class _SignInPageState extends State<SignInPage> {
             ),
           ),
         ),
-        _buildLine(),
+        _dividerLine(),
       ],
     );
   }
 
-  /// Builds the social login options row (e.g., Facebook and Gmail).
-  Row _buildSocialLoginOptions() {
+  /// Builds a row of social login buttons (Facebook, Google, etc.).
+  ///
+  /// Each button is evenly spaced and customizable via [SocialButton].
+  Row _socialLoginRow() {
     return Row(
       children: [
         Expanded(
           /// Facebook login button.
           child: SocialButton(
-            onTap: () {},
+            onTap: () {
+              // TODO: Implement Facebook login
+            },
             color: AppColors.facebookBlue,
             iconPath: AppIcons.facebookIcon,
             label: AppString.btnFacebook,
@@ -201,7 +214,7 @@ class _SignInPageState extends State<SignInPage> {
         Expanded(
           /// Facebook login button.
           child: SocialButton(
-            onTap: () async => await authController.signInWithGoogle(),
+            onTap: () async => await _authController.signInWithGoogle(),
             color: AppColors.red,
             iconPath: AppIcons.gmailIcon,
             label: AppString.btnGmail,
@@ -212,18 +225,7 @@ class _SignInPageState extends State<SignInPage> {
   }
 
   /// Builds a horizontal line for the divider.
-  Container _buildLine() {
+  Container _dividerLine() {
     return Container(height: 2.5.h, width: 70.w, color: AppColors.grey);
   }
 }
-
-/*
-//formKey.currentState?.validate() and resetting with formKey.currentState?.reset()
-#: SignInPage	SignInScreen	"Screen" is more descriptive than "Page"
-#: Which is best way to declare variable name
-final AuthController authController = Get.find<AuthController>();
-or final AuthController authController = Get.find<AuthController>()
-#: final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-#: Why use dispose
-
-*/

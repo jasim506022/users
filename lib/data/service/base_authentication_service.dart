@@ -5,10 +5,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import '../../model/profile_model.dart';
 
 abstract class BaseAuthenticationService {
-  Future<UserCredential> signInWithEmailAndPassword(
+  Future<UserCredential> signInWithEmail(
       {required String email, required String password});
   Future<UserCredential?> signWithGoogle();
-  Future<bool> userExists();
+  Future<bool> doesUserProfileExist();
   Future<void> createNewUserWithGoogle(
       {required User user, required ProfileModel profileModel});
 

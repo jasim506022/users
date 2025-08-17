@@ -79,7 +79,7 @@ class _SignUpPageState extends State<SignUpPage> {
                   onTap: () async {
                     if (!authController.loadingController.loading.value) {
                       Get.back();
-                      authController.resetFields();
+                      authController.clearInputFields();
                     }
                   },
                 ),

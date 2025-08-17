@@ -3,67 +3,102 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../res/app_function.dart';
 import '../res/apps_text_style.dart';
+import 'custom_text_field_decoration.dart';
+
+/// A reusable custom text form field with label, validation,
+/// password toggle, and optional custom decoration.
+///
+/// Supports:
+/// - Email, password, and general text input
+/// - Validation via [validator]
+/// - Password visibility toggle with [hasPasswordToggle]
+/// - Custom [decoration] or default consistent styling
 
 class CustomTextFormField extends StatefulWidget {
-  const CustomTextFormField(
-      {super.key,
-      required this.hintText,
-      required this.controller,
-      this.autofocus = false,
-      this.obscureText = false,
-      this.hasPasswordToggle = false,
-      this.textInputAction = TextInputAction.next,
-      this.maxLines = 1,
-      this.enabled = true,
-      this.textInputType = TextInputType.text,
-      this.onChanged,
-      this.validator,
-      this.decoration,
-      this.label,
-      this.style});
+  const CustomTextFormField({
+    super.key,
+    required this.hintText,
+    required this.controller,
+    this.label,
+    this.autofocus = false,
+    this.enabled = true,
+    this.obscureText = false,
+    this.hasPasswordToggle = false,
+    this.textInputAction = TextInputAction.next,
+    this.textInputType = TextInputType.text,
+    this.maxLines = 1,
+    this.validator,
+    this.onChanged,
+    this.onFieldSubmitted,
+    this.decoration,
+    this.style,
+    this.autofillHints,
+  });
+
+  /// Placeholder text inside the field
   final String hintText;
+  /// Optional label displayed above the field
+  final String? label;
+  /// Text editing controller
   final TextEditingController controller;
+  /// Autofocus on field load
   final bool autofocus;
-  final TextInputAction? textInputAction;
-  final TextInputType textInputType;
-  final int? maxLines;
-  final bool obscureText;
-  final bool hasPasswordToggle;
+  /// Whether the field is enabled
   final bool enabled;
+
+  /// Whether the text should be obscured (e.g., for passwords)
+  final bool obscureText;
+  /// Whether to show a password toggle button
+  final bool hasPasswordToggle;
+  /// Action button on the keyboard (Next, Done, etc.)
+  final TextInputAction? textInputAction;
+  /// Keyboard input type (email, number, etc.)
+  final TextInputType textInputType;
+  /// Maximum number of lines (ignored if [obscureText] is true)
+  final int maxLines;
+
+  /// Validator for form validation
   final String? Function(String?)? validator;
+  /// Called when text changes
   final Function(String)? onChanged;
 
+  /// Called when user submits the field (e.g., presses Done/Enter)
+  final Function(String)? onFieldSubmitted;
+  /// Custom input decoration (if not provided, default is applied)
   final InputDecoration? decoration;
+  /// Custom text style
   final TextStyle? style;
 
-  final String? label;
+  /// Autofill hints (e.g., [AutofillHints.email], [AutofillHints.password])
+  final List<String>? autofillHints;
+
 
   @override
   State<CustomTextFormField> createState() => _CustomTextFormFieldState();
 }
 
 class _CustomTextFormFieldState extends State<CustomTextFormField> {
-  /// Controls password visibility when `hasPasswordToggle` is enabled.
+  /// Controls password visibility when [hasPasswordToggle] is enabled
   late bool _obscureText;
+
   @override
   void initState() {
     /// Initializes `_obscureText` based on the widget's `obscureText` property.
-    _obscureText = widget.obscureText;
+    _obscureText = widget.hasPasswordToggle ? true : widget.obscureText;
     super.initState();
   }
 
-  /// Toggles the visibility of password text.
-
+  /// Toggles the visibility of password text
   void _togglePasswordVisibility() {
-    setState(() {
-      _obscureText = !_obscureText;
-    });
+    setState(() => _obscureText = !_obscureText);
   }
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.symmetric(vertical: 10.h),
+      padding: widget.label != null
+          ? EdgeInsets.symmetric(vertical: 10.h)
+          : EdgeInsets.zero,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -72,7 +107,6 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
             Text(widget.label!, style: AppsTextStyle.labelTextStyle),
 
           /// Adds spacing between label and input field.
-
           AppsFunction.verticalSpacing(8),
           TextFormField(
             onChanged: widget.onChanged,
@@ -84,19 +118,24 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
             obscureText: _obscureText,
             textInputAction: widget.textInputAction,
             keyboardType: widget.textInputType,
-            style: widget.style ??
+            autofillHints: widget.autofillHints,
+            onFieldSubmitted: widget.onFieldSubmitted,
+            style:
+                widget.style ??
                 AppsTextStyle.textFieldInputTextStyle(widget.enabled),
 
-            /// Applies the provided decoration or uses default styling.
-            decoration: widget.decoration ??
-                AppsFunction.textFieldInputDecoration(
-                    isEnable: widget.enabled,
-                    hintText: widget.hintText,
-                    isShowPassword: widget.hasPasswordToggle,
-                    obscureText: _obscureText,
-                    onPasswordToggle: widget.hasPasswordToggle
-                        ? _togglePasswordVisibility
-                        : null),
+            /// Applies custom or default decoration
+            decoration:
+                widget.decoration ??
+                CustomTextFieldDecoration.inputDecoration(
+                  isEnable: widget.enabled,
+                  hintText: widget.hintText,
+                  isShowPassword: widget.hasPasswordToggle,
+                  isPasswordObscured: _obscureText,
+                  onPasswordToggle: widget.hasPasswordToggle
+                      ? _togglePasswordVisibility
+                      : null,
+                ),
           ),
         ],
       ),
@@ -105,113 +144,3 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
 }
 
 
-
-
-/*
-Refactored obscureText into _TextFormFieldWidgetState (prevents modifying widget properties).
-Why we don't use in final
-
-You're modifying widget.obscureText directly, which is not allowed in StatefulWidget.
-Instead, use a local bool _obscureText inside _TextFormFieldWidgetState.
-
-#: isShowPassword → hasPasswordToggle (more descriptive). (Why)
-
-function: () {
-                        widget.hasPasswordToggle
-                        ? _togglePasswordVisibility()
-                        : null
-                      },),),
-
-                      Difference betwee
-
-                      function: widget.hasPasswordToggle
-                        ? _togglePasswordVisibility
-                        : null
-
-
-*/
-
-
-/*
-// ignore: must_be_immutable
-class TextFormFieldWidget extends StatefulWidget {
-  TextFormFieldWidget(
-      {super.key,
-      this.hintText,
-      required this.controller,
-      this.autofocus = false,
-      this.obscureText = false,
-      this.isShowPassword = false,
-      this.textInputAction = TextInputAction.next,
-      this.maxLines = 1,
-      this.enabled = true,
-      this.textInputType = TextInputType.text,
-      this.onChanged,
-      this.validator,
-      this.isUdateDecoration = false,
-      this.decoration,
-      this.label,
-      this.style});
-  final String? hintText;
-  final TextEditingController controller;
-  final bool autofocus;
-  final TextInputAction? textInputAction;
-  final TextInputType textInputType;
-  final int? maxLines;
-  bool obscureText;
-  final bool isShowPassword;
-  final bool enabled;
-  final String? Function(String?)? validator;
-  final Function(String)? onChanged;
-  final bool isUdateDecoration;
-  final InputDecoration? decoration;
-  final TextStyle? style;
-
-  final String? label;
-
-  @override
-  State<TextFormFieldWidget> createState() => _TextFormFieldWidgetState();
-}
-
-class _TextFormFieldWidgetState extends State<TextFormFieldWidget> {
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.symmetric(vertical: 10.h),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          if (widget.label != null)
-            Text(widget.label!, style: AppsTextStyle.labelTextStyle),
-          AppsFunction.verticalSpacing(8),
-          TextFormField(
-              onChanged: widget.onChanged,
-              enabled: widget.enabled,
-              controller: widget.controller,
-              autofocus: widget.autofocus,
-              maxLines: widget.maxLines,
-              validator: widget.validator,
-              obscureText: widget.obscureText,
-              textInputAction: widget.textInputAction,
-              keyboardType: widget.textInputType,
-              style: widget.style ??
-                  AppsTextStyle.textFieldInputTextStyle(widget.enabled),
-              decoration: widget.isUdateDecoration
-                  ? widget.decoration
-                  : AppsFunction.textFormFielddecoration(
-                      isEnable: widget.enabled,
-                      hintText: widget.hintText!,
-                      isShowPassword: widget.isShowPassword,
-                      obscureText: widget.obscureText,
-                      function: () {
-                        widget.obscureText = !widget.obscureText;
-                        setState(() {});
-                      })),
-        ],
-      ),
-    );
-  }
-}
-
-
-*/

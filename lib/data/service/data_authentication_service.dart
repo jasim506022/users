@@ -14,13 +14,15 @@ class DataAuthenticationService extends BaseAuthenticationService {
   final _firebaseFirestore = FirebaseFirestore.instance;
   final _firebaseStorage = FirebaseStorage.instance;
 
-  /// Sign in user with email and password
+  /// Signs in a user using email and password.
+  ///
+  /// Throws [FirebaseAuthException] if sign-in fails.
   @override
-  Future<UserCredential> signInWithEmailAndPassword({
+  Future<UserCredential> signInWithEmail({
     required String email,
     required String password,
-  }) {
-    return _firebaseAuth.signInWithEmailAndPassword(
+  }) async {
+    return await _firebaseAuth.signInWithEmailAndPassword(
       email: email,
       password: password,
     );
@@ -46,9 +48,12 @@ class DataAuthenticationService extends BaseAuthenticationService {
 
   }
 
-  /// Check if the user exists in Firestore
+  /// Checks if the current user's profile exists in Firestore.
+  ///
+  /// Returns `true` if the user document exists, otherwise `false`.
+  /// Returns `false` immediately if no user is signed in
   @override
-  Future<bool> userExists() async {
+  Future<bool> doesUserProfileExist() async {
     final userId = _firebaseAuth.currentUser?.uid;
     if (userId == null) return false;
 

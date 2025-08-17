@@ -12,7 +12,7 @@ import '../res/app_function.dart';
 import '../res/app_asset/icon_asset.dart';
 import '../res/routes/routes_name.dart';
 import '../widget/error_dialog_widget.dart';
-import '../widget/show_alert_dialog_widget.dart';
+import '../widget/custom_alert_dialog.dart';
 
 class AddressController extends GetxController {
   final AddressRepository repository;
@@ -101,7 +101,7 @@ class AddressController extends GetxController {
       return;
     }
 
-    Get.dialog(ShowAlertDialogWidget(
+    Get.dialog(CustomAlertDialog(
       icon: Icons.question_mark_rounded,
       title: AppString.saveChaned,
       content: AppString.doYouWantSave,
@@ -137,7 +137,7 @@ class AddressController extends GetxController {
 
   Future<void> deleteAddress() async {
     final confirmed = await Get.dialog<bool>(
-      ShowAlertDialogWidget(
+      CustomAlertDialog(
         icon: Icons.question_mark_rounded,
         title: AppString.confirmDeletion,
         content: AppString.deleteMessage,

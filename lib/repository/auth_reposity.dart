@@ -7,14 +7,16 @@ import '../data/service/data_authentication_service.dart';
 import '../model/profile_model.dart';
 import '../res/app_function.dart';
 
-class AuthReposity {
+class AuthRepository {
   final DataAuthenticationService _authService = DataAuthenticationService();
 
   /// Signs in a user using their email and password.
-  Future<UserCredential> loginWithEmailAndPassword(
+  ///
+  /// Throws an exception if sign-in fails. Errors are logged via [AppsFunction.handleException].
+  Future<UserCredential> signInWithEmail(
       {required String email, required String password}) async {
     try {
-      return await _authService.signInWithEmailAndPassword(
+      return await _authService.signInWithEmail(
           email: email, password: password);
     } catch (e) {
       AppsFunction.handleException(e);
@@ -32,10 +34,13 @@ class AuthReposity {
     }
   }
 
-  /// Checks if a user profile exists in Firestore.
-  Future<bool> isUserProfileExists() async {
+  /// Checks if the current user profile exists in Firestore.
+  ///
+  /// Returns `true` if the user profile exists, otherwise `false`.
+  /// Throws an exception on failure. Errors are logged via [AppsFunction.handleException].
+  Future<bool> doesUserProfileExist() async {
     try {
-      return await _authService.userExists();
+      return await _authService.doesUserProfileExist();
     } catch (e) {
       AppsFunction.handleException(e);
       rethrow;

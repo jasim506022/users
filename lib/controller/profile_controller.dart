@@ -13,7 +13,7 @@ import '../res/app_function.dart';
 import '../res/app_asset/icon_asset.dart';
 import '../res/routes/routes_name.dart';
 import '../widget/error_dialog_widget.dart';
-import '../widget/show_alert_dialog_widget.dart';
+import '../widget/custom_alert_dialog.dart';
 import 'loading_controller.dart';
 import 'select_image_controller.dart';
 
@@ -45,7 +45,7 @@ class ProfileController extends GetxController {
       Get.back();
       return;
     }
-    Get.dialog(ShowAlertDialogWidget(
+    Get.dialog(CustomAlertDialog(
         icon: Icons.question_mark_rounded,
         title: AppString.saveChanged,
         content: AppString.doYouWantSave,

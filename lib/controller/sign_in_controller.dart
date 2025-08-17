@@ -9,7 +9,7 @@ import '../res/app_asset/icon_asset.dart';
 import '../res/app_string.dart';
 import '../res/routes/routes_name.dart';
 import '../widget/error_dialog_widget.dart';
-import '../widget/show_alert_dialog_widget.dart';
+import '../widget/custom_alert_dialog.dart';
 import 'loading_controller.dart';
 /*
 class SignInController extends GetxController {
